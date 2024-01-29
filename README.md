@@ -2,17 +2,18 @@
 Files for NRS 528, Spring Semester 2024
 
 ## Biography
-Hello there. My name is Philip Fan Yang (Phil to friends). I am a PhD student in Dr. Andrew Davies' lab ([see MarEcoTec profile](https://marecotec.com/team_member/philip-yang/)) and have been at the University of Rhode Island Graduate School of Oceanography since 2022 Fall. 
+Hello there. My name is Philip Fan Yang (b. 1999, Phil to friends!). I am a PhD student in Dr. Andrew Davies' lab ([see MarEcoTec profile](https://marecotec.com/team_member/philip-yang/)) and have been at the University of Rhode Island Graduate School of Oceanography since Fall 2022. 
 My research interests span marine ecology, oceanography, and geospatial science. 
 Most of my dissertation work takes place in the northern Gulf of Mexico studying mesophotic coral and coralline algal reefs that occur from 30 m to 150 m deep. 
-Of course, I did not just plop down where I am today, it is the culmination of 24 years of life and story. Here, I share some information about me. 
+Of course, I did not just plop down where I am today, it is the culmination of 24 years of life and story. Below, I share some information about me. 
 
 ![Recent picture of me (left) during a walk with my girlfriend at Scarborough Beach.](/BioPic.jpg)
+Above: Recent picture of me (left) during a walk with my girlfriend at Scarborough Beach.
 
 ### Education
 Here is a small table here to show where I have been academically and professionally, like an abridged CV.
 
-| Educational Institution                  | Year          | Location         |
+| Education or Job                 | Year          | Location         |
 | :----------------------: | :-------------: | :---------------- |
 | Seton Catholic Central High School       | 2013 - 2017   | Plattsburgh, NY  | 
 | Villanova University                     | 2017 - 2021   | Villanova, PA    |
