@@ -31,8 +31,3 @@ I have made a couple ESRI StoryMaps.
 2. The second is a StoryMap in a bio format that I originally made to send to professors that I reached out to for graduate opportunities.[Life in one scroll](https://arcg.is/040mvD)
 3. The third is a StoryMap that I made as a public outreach piece and journal of sorts to display my Fulbright research experience in the Philippines in 2022.[(Philip)pines: a Fulbright research experience](https://arcg.is/005DDH)
 
-
-### I originally tried to use footnotes to indicate in text where to go for the link but that did not work and after some time looking I could not find a solution.
-[^1] StoryMap: [Boat wake influences on coastal vulnerability in small estuary channels](https://villanova.maps.arcgis.com/apps/MapSeries/index.html?appid=090d7618677e433faf9fda3b6a18923e)
-[^2] StoryMap: [Welcome to my life told in one scroll](https://arcg.is/040mvD)
-[^3] StoryMap: [(Philip)pines: a Fulbright research experience](https://arcg.is/005DDH)
