@@ -23,10 +23,10 @@ Here is a small table here to show where I have been academically and profession
 
 ### Sport
 I like to play basketball and have been doing so since I was eight or nine years old. 
-Here is a link to a short clip of my unremarkable high school basketball years :zany_face: : [Youtube evidence of Phil's (#10) basketball glory days...](https://youtu.be/c5X_J0UJ9ZA?si=0rrcNtH9F42qPF2U&t=2040)
+Here is a link to a short clip of my unremarkable high school basketball years: [Youtube evidence of Phil's (#10) basketball glory days...](https://youtu.be/c5X_J0UJ9ZA?si=0rrcNtH9F42qPF2U&t=2040)
 
 ### StoryMaps
-I have made a couple ESRI StoryMaps. 
+I have made a couple of ESRI StoryMaps. 
 1. The first is a presentation of my senior thesis work at Villanova University in the WETFEET Lab led by Dr. Samantha Chapman and Dr. Adam Langley.[Boat wakes in Florida](https://villanova.maps.arcgis.com/apps/MapSeries/index.html?appid=090d7618677e433faf9fda3b6a18923e) 
 2. The second is a StoryMap in a bio format that I originally made to send to professors that I reached out to for graduate opportunities.[Life in one scroll](https://arcg.is/040mvD)
 3. The third is a StoryMap that I made as a public outreach piece and journal of sorts to display my Fulbright research experience in the Philippines in 2022.[(Philip)pines: a Fulbright research experience](https://arcg.is/005DDH)
