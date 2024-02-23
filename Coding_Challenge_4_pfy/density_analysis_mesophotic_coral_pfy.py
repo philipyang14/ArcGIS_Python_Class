@@ -32,7 +32,7 @@ XY_start_time = time.time()
 # https://pro.arcgis.com/en/pro-app/latest/tool-reference/data-management/xy-table-to-point.htm
 
 # Inputs
-in_table = "\DeepSeaCorals_NOAADistribution.csv"
+in_table = "\mcePoints_filter.csv"
 out_feature_class = "MCE_points"
 x_field = "longitude"
 y_field = "latitude"
