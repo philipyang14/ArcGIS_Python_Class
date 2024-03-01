@@ -32,7 +32,9 @@ import pandas as pd
 
 # Set the workspace
 # *************** Andy change to this path to where this folder is on your machine ********************
-arcpy.env.workspace = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Coding_Challenge_5_pfy"
+base_path_directory = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Coding_Challenge_5_pfy"
+os.chdir(base_path_directory)
+arcpy.env.workspace = base_path_directory
 arcpy.env.overwriteOutput = True
 
 # Load the concatenated CSV file
