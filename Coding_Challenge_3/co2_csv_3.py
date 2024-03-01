@@ -6,7 +6,7 @@ import pandas as pd
 import io
 import requests
 import matplotlib.pyplot as plt
-from tabulate import tabulate
+# from tabulate import tabulate
 import seaborn as sns
 
 # URL of the CSV file
@@ -84,9 +84,9 @@ plt.show()
 co2_table_df = avg_co2_yr.reset_index().rename(columns={'co2_ppm': 'Average CO2 (ppm)'})
 
 # Convert DataFrame to LaTeX format
-table_latex = tabulate(co2_table_df, tablefmt='latex_raw', headers='keys', showindex=False)
-
-print(table_latex)
+# table_latex = tabulate(co2_table_df, tablefmt='latex_raw', headers='keys', showindex=False)
+#
+# print(table_latex)
 
 
 # Answering #3
