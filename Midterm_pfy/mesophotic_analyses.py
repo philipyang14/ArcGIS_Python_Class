@@ -215,7 +215,8 @@ meso_df = pd.DataFrame(arcpy.da.FeatureClassToNumPyArray(input,["NEAR_DIST"]))
 print(meso_df.head())
 
 # Define bin edges
-bin_edges = np.arange(0, 51, 5)
+bin_edges = np.arange(0, 51, 1)
+xticks = np.arange(0, 51, 5)
 
 # Calculate mean distance
 mean_distance = meso_df['NEAR_DIST'].mean()
@@ -226,7 +227,7 @@ meso_df['NEAR_DIST'].plot.hist(bins=bin_edges, edgecolor='black', alpha=0.7)
 plt.xlabel('Nearest distance (km)', fontsize = 16)
 plt.ylabel('Count', fontsize = 16)
 plt.title('Count of nearest distances of mesophotic coral locations to an oil rig, GoM')
-plt.xticks(bin_edges)
+plt.xticks(xticks)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.axvline(mean_distance, color='red', linestyle='--', label=f'Mean Distance: {mean_distance:.2f}')
 plt.tight_layout()
