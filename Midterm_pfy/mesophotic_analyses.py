@@ -4,6 +4,9 @@ NRS 528
 Midterm project
 Created on 14 Mar 2024
 
+User instructions:
+    Extract raw_data_files.zip and then change to local directory to the folder "Midterm_pfy".
+
 Description:
     This script imports xy point data from NOAA's Deep Sea Coral and Sponge portal for the NW Gulf of Mexico (GoM) for
     coral locations found above 200 m (a proxy boundary for mesophotic coral).
@@ -16,7 +19,8 @@ Description:
 Resources:
     Coral and Sponge portal: https://www.ncei.noaa.gov/maps/deep-sea-corals/mapSites.htm
     BOEM GoM data: https://www.data.boem.gov/Main/Mapping.aspx
-    Reference: Fisher, C.R., P.A. Montagna, and T.T. Sutton. 2016. How did the Deepwater Horizon oil spill impact deep-sea ecosystems? Oceanography 29(3):182–195, https://doi.org/10.5670/oceanog.2016.82.
+    Reference: Fisher, C.R., P.A. Montagna, and T.T. Sutton. 2016.
+    How did the Deepwater Horizon oil spill impact deep-sea ecosystems? Oceanography 29(3):182–195, https://doi.org/10.5670/oceanog.2016.82.
 """
 
 import os
@@ -29,7 +33,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ##################################################### Users Edit #####################################################
-# Change directory here
+# Change directory here AFTER extracting raw_data_files.zip
 base_dir = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Midterm_pfy"
 
 os.chdir(base_dir)
@@ -57,9 +61,10 @@ print(f"Created output folder: {outputs} in {os.getcwd()}")
 
 
 ################################### Clean csv file and save to temporary folder as copy ##############################
-# Input and output file paths
+# Input and output file paths - IF DATA NOT IMPORTING PROPERLY EDIT DATAFOLDER, probably issue with folder extract.
+data_folder = r"raw_data_files\raw_data_files"
 data_file = "deep_sea_corals_shallowTo200m_GoM.csv"
-input_file_path = os.path.join(base_dir, data_file)
+input_file_path = os.path.join(base_dir, data_folder, data_file)
 output_file_path = os.path.join(base_dir, temp_folder, "mesophotic_corals_GoM.csv")
 
 # Read the CSV file and remove the second row
@@ -134,10 +139,10 @@ if os.path.exists(os.path.join(base_dir, temp_folder, "mesophotic_corals_GoM_equ
 
 ########################### Import oil rigs, project and run near tool with mesophotic points ########################
 # Duplicate oil platform data into temporary folder
-source_dir = os.path.join(base_dir, "oil_platforms_GoM")
+source_dir = os.path.join(base_dir, data_folder)
 dest_dir = os.path.join(base_dir, temp_folder)
 
-for filename in glob.glob(os.path.join(source_dir, '*.*')):
+for filename in glob.glob(os.path.join(source_dir, '*platform*')):
                 shutil.copy(filename, dest_dir)
                 print(f"Copied {filename} to {dest_dir}")
 
