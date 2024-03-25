@@ -1,18 +1,29 @@
 # Philip Yang
 # NRS 528
 # Coding Challenge 5
+# Requirements:
+# 1. The two input species data must be in a **SINGLE** CSV file, you must process the input data to separate out the species
+# (Hint: You can a slightly edited version of our CSV code from a previous session to do this), I recommend downloading the species data from the same source so the columns match.
+# 2. Only a single line of code needs to be altered (workspace environment) to ensure code runs on my computer, and you provide the species data along with your Python code.
+# 3. The heatmaps are set to the right size and extent for your species input data, i.e. appropriate fishnet cellSize.
+# 4. You leave no trace of execution, except the resulting heatmap files.
+# 5. You provide print statements that explain what the code is doing, e.g. Fishnet file generated.
+
 
 # Description: creating heat maps for two species, one scleractinian coral (Montipora foliosa) and one reef associated fish (Pseudanthias squamipinnis)
 
 import arcpy
 import pandas as pd
-# import os
+import os
+
+################################################# DO NOT CHANGE ########################################################
 
 # Code to create a single csv file
 # KEEP COMMENTED OUT BECAUSE THE ORIGINAL CSV's DO NOT EXIST ANYMORE:
 
 # # Specify the path to your desired working directory
-# working_directory = "C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Coding_Challenge_5_pfy"
+# base_path_directory = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Coding_Challenge_5_pfy"
+# working_directory = base_path_directory
 #
 # # Use os.chdir() to change the current working directory
 # os.chdir(working_directory)
@@ -29,6 +40,11 @@ import pandas as pd
 # # Save as a new CSV file
 # concatenated_df.to_csv("Coral_and_Fish_distribution.csv", index=False)
 
+####################################################### END ############################################################
+
+
+
+################################################# Process the csv ######################################################
 
 # Set the workspace
 # *************** Andy change to this path to where this folder is on your machine ********************
@@ -55,7 +71,11 @@ print("Coral saved as csv")
 squamipinnis_df.to_csv("Pseudanthias_squamipinnis.csv", index=False,  mode='w')
 print("Grouper (fish) saved as csv")
 
-######################## HEAT MAP MONTIPORA ########################
+####################################################### END ############################################################
+
+
+
+################################################# HEAT MAP MONTIPORA ###################################################
 
 # Convert Montipora_foliosa.csv to a shapefile.
 
@@ -134,7 +154,11 @@ if arcpy.Exists(out_feature_class):
     arcpy.Delete_management(target_features)
     arcpy.Delete_management(join_features)
 
-######################## HEAT MAP PSEUDANTHIAS ########################
+####################################################### END ############################################################
+
+
+
+################################################# HEAT MAP PSEUDANTHIAS ################################################
 
 # Convert Pseudanthias_squamipinnis.csv to a shapefile.
 
@@ -212,3 +236,5 @@ if arcpy.Exists(out_feature_class):
     print("Deleting Pseudanthias intermediate files")
     arcpy.Delete_management(target_features)
     arcpy.Delete_management(join_features)
+
+####################################################### END ############################################################
