@@ -196,7 +196,7 @@ outFeatureClass = "Pseudanthias_Fishnet.shp"  # Name of output fishnet
 # Set the origin of the fishnet
 originCoordinate = str(XMin) + " " + str(YMin)  # Left bottom of our point data
 yAxisCoordinate = str(XMin) + " " + str(YMin + 1)  # This sets the orientation on the y-axis, so we head north
-cellSizeWidth = "1"
+cellSizeWidth = "1" 
 cellSizeHeight = "1"
 numRows = ""  # Leave blank, as we have set cellSize
 numColumns = "" # Leave blank, as we have set cellSize
