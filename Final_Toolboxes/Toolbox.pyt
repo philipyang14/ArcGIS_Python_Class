@@ -1,11 +1,13 @@
 import arcpy
+import os
+import pandas
 
 
 class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
-        self.label = "Python Toolbox XYTable to Point to Intersect with ArcGIS Shapefile to New GRID Shapefile"
+        self.label = "Python Toolbox for Species Distribution Data"
         self.alias = ""
 
         # List of tool classes associated with this toolbox
@@ -15,7 +17,7 @@ class Toolbox(object):
 class ProcessCSV_ToShapefile(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "XY to Point Tool"
+        self.label = " XYTable to Point to Intersect with ArcGIS Shapefile to New GRID Shapefile"
         self.description = "Takes csv with XY coordinate columns and converts to a shapefile of points"
         self.canRunInBackground = False
 
@@ -28,8 +30,17 @@ class ProcessCSV_ToShapefile(object):
                                      parameterType="Required",  # Required|Optional|Derived
                                      direction="Input",  # Input|Output
                                      )
-        input_csv.value = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Final_Toolboxes\GoM_occurrence_data\NWGOM18_CC_final.csv"  # This is a default value that can be over-ridden in the toolbox
+        input_csv.value = r"H:\NRS528_2024\Philip_Yang\Final_Toolboxes\GoM_occurrence_data\testoutput.txt"  # This is a default value that can be over-ridden in the toolbox
         params.append(input_csv)
+
+        output_points = arcpy.Parameter(name="output_temp_folder",
+                                        displayName="Output Temporary Folder",
+                                        datatype="DEFolder",
+                                        parameterType="Required",  # Required|Optional|Derived
+                                        direction="Output",  # Input|Output
+                                        )
+        output_points.value = r"H:\NRS528_2024\Philip_Yang\Final_Toolboxes\temporary_files"  # This is a default value that can be over-ridden in the toolbox
+        params.append(output_points)
 
         output_points = arcpy.Parameter(name="output_points",
                                         displayName="Output shapefile",
@@ -37,7 +48,7 @@ class ProcessCSV_ToShapefile(object):
                                         parameterType="Required",  # Required|Optional|Derived
                                         direction="Output",  # Input|Output
                                         )
-        output_points.value = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Final_Toolboxes\temporary_files\NWGOM18_CC_final_XYTableToPoint.shp"  # This is a default value that can be over-ridden in the toolbox
+        output_points.value = r"H:\NRS528_2024\Philip_Yang\Final_Toolboxes\temporary_files\NWGOM18_CC_final_XYTableToPoint.shp"  # This is a default value that can be over-ridden in the toolbox
         params.append(output_points)
 
         return params
@@ -59,15 +70,21 @@ class ProcessCSV_ToShapefile(object):
 
     def execute(self, parameters, messages):
         """The source code of the tool."""
-        import os
-        base_dir = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Final_Toolboxes"
-        if not os.path.exists(os.path.join(base_dir, "temporary_files")):
-            os.mkdir(os.path.join(base_dir, "temporary_files"))
+        # import os
+        # base_dir = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Final_Toolboxes"
 
-        arcpy.env.workspace = base_dir
+        #
+        # arcpy.env.workspace = base_dir
 
         in_table = parameters[0].valueAsText
-        out_feature_class = parameters[1].valueAsText
+        output_folder = parameters[1].valueAsText
+        out_feature_class = parameters[2].valueAsText
+
+        if not os.path.exists(output_folder):
+            os.mkdir(output_folder)
+
+        test_csv = pandas.read_csv(in_table)
+
         x_field = "LongitudeInDD"
         y_field = "LatitudeInDD"
         z_field = ""
