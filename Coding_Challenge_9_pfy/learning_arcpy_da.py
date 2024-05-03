@@ -22,7 +22,7 @@ and do some basic counts of the dataset. In summary, please addressing the follo
 import arcpy, os
 
 ################################################## EDIT BASE DIR HERE: #################################################
-base_dir = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Coding_Challenge_9_pfy"
+base_dir = r"H:\NRS528_2024\Philip_Yang\Coding_Challenge_9_pfy"
 
 arcpy.env.workspace = base_dir
 arcpy.env.overwriteOutput = True
