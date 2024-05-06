@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<metadata xml:lang="en"><Esri><CreaDate>20240412</CreaDate><CreaTime>13520800</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Spatial Analyst Tools.tbx\ExtractMultiValuesToPoints" Date="20240412" Time="135208">ExtractMultiValuesToPoints Great_Whites.shp "sst_max.tif sst_max;sst_mean.tif sst_mean;sst_min.tif sst_min" NONE</Process></lineage></DataProperties></Esri></metadata>
