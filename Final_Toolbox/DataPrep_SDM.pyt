@@ -1,4 +1,3 @@
-import time
 
 import arcpy
 import os
@@ -8,6 +7,7 @@ import glob
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+import shutil
 
 base_dir = r"C:\Users\Philip Yang\OneDrive - University of Rhode Island\NRS_528\ArcGIS_Python_Class\Final_Toolbox"
 arcpy.env.overwriteOutput = True
@@ -22,9 +22,11 @@ This toolbox takes one csv file of habitat occurrence data (Marissa Nuttall, NOA
 the most common habitat value from the point shapefile. Then, a new raster is built from that in-between raster where any 
 habitat values of "Coralline algae" are assigned a new field value of 1 and the other two values (Deep reef and soft bottom)
 are assigned a value of 0. This is to create a final output raster that contains the occurrence data of coralline algae 
-from this dataset in a raster format that overlaps with the 5 by 5 bathymetry mosaic.
+from this dataset in a raster format that overlaps with the 5 by 5 bathymetry mosaic. The data needed for this toolbox 
+are in the zipped folders GoM_occurrence_data and fgb_bathy_mosaic. 
 
-
+RUN THE SCRIPTS AT THE BOTTOM OF EACH TOOL BY UNCOMMENTING 'def main():....main()'
+To avoid issues, run the tools individually.
 '''
 
 class Toolbox(object):
@@ -35,7 +37,7 @@ class Toolbox(object):
         self.alias = ""
 
         # List of tool classes associated with this toolbox
-        self.tools = [ProcessCSV_ToShapefile, Intersect_PointToRaster]
+        self.tools = [ProcessCSV_ToShapefile, ExtractMultiRasterValues, Habitat_DataCleaning, DeleteFolder]
 
 
 class ProcessCSV_ToShapefile(object):
@@ -112,6 +114,7 @@ class ProcessCSV_ToShapefile(object):
         # Iterate over CSV files in the folder
         for csv_file in glob.glob(os.path.join(in_folder, "*.csv")):
             print("\n",os.path.basename(csv_file))
+
             # Read the CSV file into a DataFrame
             df = pd.read_csv(csv_file, low_memory=False)
 
@@ -137,7 +140,6 @@ class ProcessCSV_ToShapefile(object):
                     selected_df["DepthInMeters"] = df[col]
                 elif "habitat" in col.lower():
                     selected_df["Habitat"] = df[col]
-
 
             # # Keep only the first four selected columns
             selected_df = selected_df.iloc[:, :4]
@@ -233,6 +235,7 @@ class ProcessCSV_ToShapefile(object):
         print("\nThe order of the integers for x axis of habitats should follow this left to right: ",
               df['Habitat'].unique(), "Could not figure out for hours why PyCharm and PLT don't like categories here, "
                                       "but if the order is correct it seems Reef and Deep Reef depth ranges are not different")
+
         # Convert 'Habitat' column to categorical data type
         df['Habitat'] = df['Habitat'].astype('category')
         # Replace 'DepthInMeters' and 'Habitat' with actual column names from your DataFrame
@@ -270,6 +273,7 @@ class ProcessCSV_ToShapefile(object):
         z_field = ""
         coordinate_system = arcpy.SpatialReference(4326) # WGS 1984
 
+        # Run tool
         arcpy.management.XYTableToPoint(in_table,
                                         out_feature_class,
                                         x_field,
@@ -293,11 +297,12 @@ class ProcessCSV_ToShapefile(object):
 # if __name__ == '__main__':
 #     main()
 
-class Intersect_PointToRaster(object):
+
+class ExtractMultiRasterValues(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Intersect Point Shapefile with Grid"
-        self.description = "Create a fishnet grid based on a bathymetry mosaic and habitat occurrence points"
+        self.label = "Extract raster values using a point shapefile"
+        self.description = "Inputting a bathymetry grid and shapefile containing multiple points, run Extract Multi Value to Point to get the depth values for each habitat occurrence point"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -312,22 +317,13 @@ class Intersect_PointToRaster(object):
         input_points.value = os.path.join(base_dir, "temporary_files", "NWGOM18_CC_final_XYTableToPoint.shp")  # This is a default value that can be over-ridden in the toolbox
         params.append(input_points)
 
-        habitat_field = arcpy.Parameter(name="habitat_field",
-                                        displayName="Habitat field",
-                                        datatype="GPString",
-                                        parameterType="Required",  # Required|Optional|Derived
-                                        direction="Output",  # Input|Output
-                                        )
-        habitat_field.value = "Habitat"  # This is a default value that can be over-ridden in the toolbox
-        params.append(habitat_field)
-
         input_raster = arcpy.Parameter(name="input_raster",
                                         displayName="Input raster",
                                         datatype="GPRasterLayer",
                                         parameterType="Required",  # Required|Optional|Derived
                                         direction="Input",  # Input|Output
                                         )
-        input_raster.value = os.path.join(base_dir, "fgb_bathy_mosaic", "fgb_mosaic_bathy_mercator.tif")  # This is a default value that can be over-ridden in the toolbox
+        input_raster.value = os.path.join(base_dir, "fgb_bathy_mosaic", "fgb_mosaic_bathy_mercator_bilinear_resampled50m.tif")  # This is a default value that can be over-ridden in the toolbox
         params.append(input_raster)
 
         output_folder = arcpy.Parameter(name="output_folder",
@@ -336,26 +332,8 @@ class Intersect_PointToRaster(object):
                                         parameterType="Required",  # Required|Optional|Derived
                                         direction="Input",  # Input|Output
                                         )
-        output_folder.value = os.path.join(base_dir, "temporary_files") # This is a default value that can be over-ridden in the toolbox
+        output_folder.value = os.path.join(base_dir, "output_files") # This is a default value that can be over-ridden in the toolbox
         params.append(output_folder)
-
-        habitat_name = arcpy.Parameter(name="habitat_name",
-                                        displayName="Habitat name",
-                                        datatype="GPString",
-                                        parameterType="Required",  # Required|Optional|Derived
-                                        direction="Output",  # Input|Output
-                                        )
-        habitat_name.value = "FGB_Fishnet"  # This is a default value that can be over-ridden in the toolbox
-        params.append(habitat_name)
-
-        output_raster = arcpy.Parameter(name="output_raster",
-                                        displayName="Output raster",
-                                        datatype="GPRasterLayer",
-                                        parameterType="Derived",  # Required|Optional|Derived
-                                        direction="Output",  # Input|Output
-                                        )
-        output_raster.value = os.path.join(base_dir, "temporary_files", "habitat_raster.tif")  # This is a default value that can be over-ridden in the toolbox
-        params.append(output_raster)
 
         return params
 
@@ -378,86 +356,232 @@ class Intersect_PointToRaster(object):
         """The source code of the tool."""
 
         point_shapefile = parameters[0].valueAsText
-        habitat_field = parameters[1].valueAsText
-        raster_file = parameters[2].valueAsText
-        output_folder = parameters[3].valueAsText
-        output_name = parameters[4].valueAsText
-        output_raster = parameters[5].valueAsText
+        raster_file = parameters[1].valueAsText
+        output_folder = parameters[2].valueAsText
 
-        # Create a file geodatabase becauase the fishnet shapefile will be > 2gb
-        def create_file_geodatabase(output_folder, geodatabase_name):
-            '''Create a file geodatabase'''
-            geodatabase_path = arcpy.CreateFileGDB_management(output_folder, geodatabase_name)
-            print(f"\nFile geodatabase created at: {geodatabase_path}")
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
 
-        # Use function:
-        output_folder = output_folder
-        geodatabase_name = "habitat_occurrence_fgb.gdb"
-        create_file_geodatabase(output_folder, geodatabase_name)
+        # Describe the raster file for extracting multi values to point
+        desc = arcpy.Describe(raster_file)
+        extent = desc.extent
+        xmin, ymin, xmax, ymax = extent.XMin, extent.YMin, extent.XMax, extent.YMax
+        cell_width, cell_height = desc.meanCellWidth, desc.meanCellHeight
+        print(f"Cell width: {cell_width}, \nCell height: {cell_height}, \nExtent: {extent}, \nxmin: {xmin}, ymin: {ymin}, xmax: {xmax}, ymax: {ymax}")
 
-        def describe_raster(raster_file):
-            '''Describe the raster file for creating a fishnet grid'''
-            desc = arcpy.Describe(raster_file)
-            extent = desc.extent
-            xmin, ymin, xmax, ymax = extent.XMin, extent.YMin, extent.XMax, extent.YMax
-            cell_width, cell_height = desc.meanCellWidth, desc.meanCellHeight
+        raster = arcpy.Raster(raster_file)
+        print("\nRaster formatted")
 
-            # Return the values according to your specified format
-            return {
-                'XMin': xmin,
-                'XMax': xmax,
-                'YMin': ymin,
-                'YMax': ymax,
-                'CellWidth': cell_width,
-                'CellHeight': cell_height
-            }
+        # Delete the field: used to keep the same columns from populating everytime I ran the code
+        arcpy.management.DeleteField(point_shapefile, "DepthInM_1")
 
-        # Run function:
-        raster_info = describe_raster(raster_file)
-        print("\nRaster extent information:", raster_info)
+        # Use Extract Multi Value to Point to obtain depth values from a bathymetry grid for habitat presence/absence locations
+        print("\nExtracting multi values...")
 
-        def create_fishnet(output_folder, geodatabase_name, output_name, raster_info):
-            '''Create a fishnet identical to the raster extent'''
-            xmin, ymin = raster_info['XMin'], raster_info['YMin']
-            xmax, ymax = raster_info['XMax'], raster_info['YMax']
-            cell_width, cell_height = raster_info['CellWidth'], raster_info['CellHeight']
+        in_point_features = point_shapefile
+        in_rasters = [[raster, "DepthInMeters"]]
+        bilinear_interpolate_values = "NONE"
 
-            out_feature_class = os.path.join(output_folder, geodatabase_name, output_name)
-            # Set the origin of the fishnet
-            origin_coord = str(xmin) + " " + str(ymin)  # Left bottom of our point data
-            y_axis_coord = str(xmin) + " " + str(ymin + 1)  # This sets the orientation on the y-axis, so we head north
-            cell_width = cell_width
-            cell_height = cell_height
-            number_rows = ""  # Leave blank, as we have set cellSize
-            number_columns = ""  # Leave blank, as we have set cellSize
-            oppositeCorner = str(xmax) + " " + str(ymax)  # i.e. max x and max y coordinate
-            labels = "NO_LABELS"
-            templateExtent = "#"  # No need to use, as we have set yAxisCoordinate and oppositeCorner
-            geometryType = "POLYGON"  # Create a polygon, could be POLYLINE
+        arcpy.gp.ExtractMultiValuesToPoints(in_point_features, in_rasters, bilinear_interpolate_values)
 
-            arcpy.management.CreateFishnet(out_feature_class,
-                                           origin_coord,
-                                           y_axis_coord,
-                                           cell_width,
-                                           cell_height,
-                                           number_rows,
-                                           number_columns,
-                                           oppositeCorner,
-                                           labels,
-                                           templateExtent,
-                                           geometryType)
+        print("Raster multi values extracted to points!")
 
-        print("Creating fishnet in", geodatabase_name, "...")
-        start_time = time.time()
-        create_fishnet(output_folder, geodatabase_name, output_name, raster_info)
-        print("Fishnet created! It took ", time.time() - start_time, "seconds to make.")
+        # View the new attribute table of the point file to check the tool worked
+        # Describe the shapefile to get its fields
+        fields = arcpy.ListFields(point_shapefile)
+        print("\nAttribute Table Header:")
+        field_names = [field.name for field in fields]
+        print("\t".join(field_names))
+        # Open a search cursor to iterate through records
+        with arcpy.da.SearchCursor(point_shapefile, field_names) as cursor:
+            # Iterate through the first 10 rows
+            for i, row in enumerate(cursor):
+                if i >= 10:
+                    break
+                # Print the values for each field in the row
+                print("\t".join(str(value) for value in row))
+
+        # Count invalid values
+        invalid_count = 0
+        field_name = "DepthInM_1"
+        # Open a search cursor to iterate through records
+        with arcpy.da.SearchCursor(point_shapefile, field_name) as cursor:
+            for row in cursor:
+                depth_value = row[0]  # Assuming the field is single-valued
+                if depth_value < -300 or depth_value > 0:
+                    invalid_count += 1
+
+        print(f"\nNumber of invalid depth values (-9999) found: {invalid_count}")
+
+        return
+
+# This code block allows you to run your code in a test-mode within PyCharm, i.e. you do not have to open the tool in
+# ArcMap. This works best for a "single tool" within the Toolbox.
+# def main():
+#     tool = ExtractMultiRasterValues()
+#     tool.execute(tool.getParameterInfo(), None)
+#
+# if __name__ == '__main__':
+#     main()
+
+
+class Habitat_DataCleaning(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Edit the point shapefile"
+        self.description = "Input a point shapefile for habitat occurrence and clean the shapefile, query the relevant points and make a new shapefile of the query. Then delete temporary file folder."
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+        params = []
+        input_points = arcpy.Parameter(name="input_points",
+                                     displayName="Input points",
+                                     datatype="DEShapeFile",
+                                     parameterType="Required",  # Required|Optional|Derived
+                                     direction="Input",  # Input|Output
+                                     )
+        input_points.value = os.path.join(base_dir, "temporary_files", "NWGOM18_CC_final_XYTableToPoint.shp")  # This is a default value that can be over-ridden in the toolbox
+        params.append(input_points)
+
+        output_points = arcpy.Parameter(name="output_points",
+                                        displayName="Output point layer",
+                                        datatype="GPString",
+                                        parameterType="Required",  # Required|Optional|Derived
+                                        direction="Output",  # Input|Output
+                                        )
+        output_points.value = os.path.join(base_dir, "output_files", "habitat_occurrence_clean.shp")  # This is a default value that can be over-ridden in the toolbox
+        params.append(output_points)
+
+        output_folder = arcpy.Parameter(name="output_folder",
+                                        displayName="Output folder",
+                                        datatype="DEFolder",
+                                        parameterType="Required",  # Required|Optional|Derived
+                                        direction="Input",  # Input|Output
+                                        )
+        output_folder.value = os.path.join(base_dir, "output_files")  # This is a default value that can be over-ridden in the toolbox
+        params.append(output_folder)
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+
+        point_shapefile = parameters[0].valueAsText
+        output_shapefile = parameters[1].valueAsText
+        output_folder = parameters[2].valueAsText
+
+        field_name = "DepthInM_1"
+        # Create a query to select features where the values are not between 0 and -300
+        query = f"{field_name} < 0 OR {field_name} > -300"
+        # Make a layer from the input shapefile
+        arcpy.MakeFeatureLayer_management(point_shapefile, "temp_layer")
+        # Select features using the query
+        arcpy.SelectLayerByAttribute_management("temp_layer", "NEW_SELECTION", query)
+        # Delete selected features
+        arcpy.DeleteFeatures_management("temp_layer")
+        # Save the changes to a new shapefile
+        arcpy.CopyFeatures_management("temp_layer", output_shapefile)
+
+        if os.path.exists(output_shapefile):
+            print("Final shapefile of habitat occurrence locations created and cleaned")
+
+        # Copy and output clean csv
+        # Construct the full path for the output CSV file
+        input_csv = os.path.join(base_dir, "temporary_files", "occurrence_all_clean.csv")
+        output_csv = os.path.join(output_folder, "occurrence_all_clean.csv")
+        shutil.copyfile(input_csv, output_csv)
+        if os.path.exists(output_csv):
+            print("Final csv created!")
+
+        # # Delete temporary file directory
+        if os.path.exists(os.path.join(base_dir, "temporary_files")):
+            arcpy.Delete_management(os.path.join(base_dir, "temporary_files"))
+            print("\nTemporary folder emptied...")
+        else: print("Temporary directory not emptied...")
+
+        return
+
+# This code block allows you to run your code in a test-mode within PyCharm, i.e. you do not have to open the tool in
+# ArcMap. This works best for a "single tool" within the Toolbox.
+# def main():
+#     tool = Habitat_DataCleaning()
+#     tool.execute(tool.getParameterInfo(), None)
+#
+# if __name__ == '__main__':
+#     main()
+
+
+class DeleteFolder(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Delete unwanted folders"
+        self.description = "Delete temporary files folder from this tree"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+        params = []
+
+        temp_folder = arcpy.Parameter(name="temp_folder",
+                                        displayName="Temporary folder",
+                                        datatype="DEFolder",
+                                        parameterType="Required",  # Required|Optional|Derived
+                                        direction="Input",  # Input|Output
+                                        )
+        temp_folder.value = os.path.join(base_dir, "temporary_files")  # This is a default value that can be over-ridden in the toolbox
+        params.append(temp_folder)
+
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+
+        folder = parameters[0].valueAsText
+
+        # # Delete temporary file directory
+        if os.path.exists(folder):
+            arcpy.Delete_management(folder)
+            print("\nTemporary folder emptied...")
+        else: print("Temporary directory not emptied...")
+
+        print('Temporary folder fully deleted')
 
         return
 
 # This code block allows you to run your code in a test-mode within PyCharm, i.e. you do not have to open the tool in
 # ArcMap. This works best for a "single tool" within the Toolbox.
 def main():
-    tool = Intersect_PointToRaster()
+    tool = DeleteFolder()
     tool.execute(tool.getParameterInfo(), None)
 
 if __name__ == '__main__':
