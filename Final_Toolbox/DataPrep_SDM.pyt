@@ -580,9 +580,9 @@ class DeleteFolder(object):
 
 # This code block allows you to run your code in a test-mode within PyCharm, i.e. you do not have to open the tool in
 # ArcMap. This works best for a "single tool" within the Toolbox.
-def main():
-    tool = DeleteFolder()
-    tool.execute(tool.getParameterInfo(), None)
-
-if __name__ == '__main__':
-    main()
+# def main():
+#     tool = DeleteFolder()
+#     tool.execute(tool.getParameterInfo(), None)
+#
+# if __name__ == '__main__':
+#     main()
