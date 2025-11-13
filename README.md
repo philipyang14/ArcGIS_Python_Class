@@ -7,7 +7,7 @@ My research interests span marine ecology, oceanography, and geospatial science.
 Most of my dissertation work takes place in the northern Gulf of Mexico studying mesophotic coral and coralline algal reefs that occur from 30 m to 150 m deep. 
 Of course, I did not just plop down where I am today, it is the culmination of 24 years of life and story. Below, I share some information about me. 
 
-![Recent picture of me (left) during a walk with my girlfriend at Scarborough Beach.](/BioPic.jpg)
+
 Above: Recent picture of me (left) during a walk with my girlfriend at Scarborough Beach.
 
 ### Education
